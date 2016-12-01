@@ -1,0 +1,24 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/And.hdl
+
+
+// This logic design is not included in
+// the original N2T content
+
+/**
+ * Negnum16 gate:
+ * in[16];
+ * out = 1 if (in[15] == 1)
+ *       0 otherwise
+ */
+
+CHIP And {
+    IN in[16];
+    OUT out;
+
+    PARTS:
+    // Put your code here:
+    And (a = in[15],  b = in[15], out =out)
+}
