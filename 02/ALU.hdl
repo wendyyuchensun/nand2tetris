@@ -74,6 +74,6 @@ CHIP ALU {
 	 And (a = notw2, b = notw2, out = zr);	 
 
 	 // ng
-	 And (a = w1[15], b = w1[15], out = ng);
+	 Negnum16 (in = w1, out = ng);
 	 
 }
