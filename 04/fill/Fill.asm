@@ -15,7 +15,7 @@
 
 
 (LISTENKBD)
-  @8191 // 8192 (total screen register num) - 1; paint from the last register of screen registers
+  @8191 // 8192 (total screen register num) - 1; paint from the last screen register
   D = A
   @count
   M = D
