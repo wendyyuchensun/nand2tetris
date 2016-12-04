@@ -12,3 +12,39 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+
+(LISTENKBD)
+  @8191 // 8192 (total screen register num) - 1; paint from the last register of screen registers
+  D = A
+  @count
+  M = D
+  @KBD
+  D = M
+  @CLEARSCREEN
+  D;JEQ	// goto cleaescreen if KBD value is 0
+(PAINTSCREEN)
+  @count
+  D = M
+  @SCREEN
+  A = A + D
+  M = -1
+  @count
+  MD = M - 1
+  @LISTENKBD
+  D;JLT
+  @PAINTSCREEN
+  0;JMP
+
+(CLEARSCREEN)
+  @count
+  D = M
+  @SCREEN
+  A = A + D
+  M = 0
+  @count
+  MD = M - 1
+  @LISTENKBD
+  D;JLT
+  @CLEARSCREEN
+  0;JMP
