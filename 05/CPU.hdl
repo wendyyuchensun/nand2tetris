@@ -39,5 +39,46 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    Not (in = instruction[15], out = ainst);  // ainst = 1 if instruction is an A instruction
+    Not (in = ainst, out = cinst);  // cinst = 1 if instruction is a C instruction
+
+    // ARegister
+    Mux16 (a = instruction, b = aluout, sel = cinst, out = newa);
+    And (a = cinst, b = instruction[5], out = storea);
+    Or (a = ainst, b = storea, out = loada);
+    ARegister (in = newa, load = loada, out = a);
+
+    // DRegister
+    And (a = cinst, b = instruction[4], out = stored);
+    DRegister (in = aluout, load = stored, out = d);
+
+    // ALU
+    Mux16 (a = a, b = inM, sel = instruction[12], out = aorm); // to compute A or M?
+    And (a = instruction[11], b = true, out = zx);
+    And (a = instruction[10], b = true, out = nx);
+    And (a = instruction[9], b = true, out = zy);
+    And (a = instruction[8], b = true, out = ny);
+    And (a = instruction[7], b = true, out = f);
+    And (a = instruction[6], b = true, out = no);
+    ALU (x = d, y = aorm, zx = zx, nx = nx, zy = zy, ny = ny, f = f, no = no, out = aluout, zr = zr, ng = ng);
+    
+    // Jump?
+    Not (in = zr, out = notzr);
+    Not (in = ng, out = notng);
+    And (a = notzr, b = notng, out = o1); // if o1 = 1, out > 0
+    And (a = notzr, b = ng, out = o2);  // if o2 = 1, out < 0
+    And (a = instruction[2], b = o2, out = w1);
+    And (a = instruction[1], b = zr, out = w2);
+    And (a = instruction[0], b = o1, out = w3);
+    Or (a = w1, b = w2, out = w4);
+    Or (a = w4, b = w3, out = shouldjump);
+    And (a = shouldjump, b = cinst, out = pcload);
+
+    // Output
+    And (a = cinst, b = instruction[3], out = writeM);
+    And16 (a = aluout, b = true, out = outM);
+    And16 (a = a, b = true, out[0..14] = addressM);
+
+    // PC
+    PC (in = a, load = pcload, inc = true, reset = reset, out[0..14] = pc);
 }
